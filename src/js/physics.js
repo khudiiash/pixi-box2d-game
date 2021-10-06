@@ -103,18 +103,17 @@ export default class Physics {
         const self = this;      
         function handleClick(e) {
             e.preventDefault();
-            var point = {
-            x: (e.offsetX || e.layerX) / self.scale,
-            y: (e.offsetY || e.layerY) / self.scale
+            const point = {
+            x: (e.offsetX || e.layerX || e.changedTouches[0].clientX) / self.scale,
+            y: (e.offsetY || e.layerY || e.changedTouches[0].clientY) / self.scale
           };
-
-        
             self.world.QueryPoint(function(fixture) {
         callback(fixture.GetBody(),
            fixture,
            point);
             }, point);
           }
+
         this.element.addEventListener("mouseup",handleClick);
         this.element.addEventListener("touchend",handleClick);
     }
@@ -122,7 +121,7 @@ export default class Physics {
         const self = this;
         let obj = null,
             joint = null,
-            start = {x: 0, y: 0}
+            startVec = {x: 0, y: 0}
     
         function calculateWorldPosition(e) {
             return {
@@ -130,37 +129,48 @@ export default class Physics {
                 y: (e.offsetY || e.layerY) / self.scale
             };
         }
-    
-        this.element.addEventListener("mousedown", function (e) {
+
+        function start(e) {
             e.preventDefault();
             const point = calculateWorldPosition(e);
-            start = point
+            if (!point.x || !point.y) {
+                point.x = e.touches[0]?.clientX 
+                point.y = e.touches[0]?.clientY
+            }
+            startVec = point
             self.world.QueryPoint(function (fixture) {
                 obj = fixture.GetBody().GetUserData();
             }, point);
-        });
-    
-        this.element.addEventListener("mousemove", function (e) {
-            if (!obj) return
+        }
+        function move(e) {
+                if (!obj) return
+                const point = calculateWorldPosition(e);
+                if (!point.x || !point.y) {
+                    point.x = e.touches[0]?.clientX 
+                    point.y = e.touches[0]?.clientY
+                }
+                if (!joint) {
+                    const jointDefinition = new Box2D.Dynamics.Joints.b2MouseJointDef();
+        
+                    jointDefinition.bodyA = self.world.GetGroundBody();
+                    jointDefinition.bodyB = obj.body;
+                    jointDefinition.target.Set(point.x, point.y);
+                    jointDefinition.maxForce = 1e28;
+                    jointDefinition.timeStep = self.stepAmount;
+                    joint = self.world.CreateJoint(jointDefinition);
+                }
+        
+                joint.SetTarget(new b2Vec2(point.x, point.y));
+        }
+
+        function end(e) {
+
             const point = calculateWorldPosition(e);
-    
-            if (!joint) {
-                const jointDefinition = new Box2D.Dynamics.Joints.b2MouseJointDef();
-    
-                jointDefinition.bodyA = self.world.GetGroundBody();
-                jointDefinition.bodyB = obj.body;
-                jointDefinition.target.Set(point.x, point.y);
-                jointDefinition.maxForce = 1e28;
-                jointDefinition.timeStep = self.stepAmount;
-                joint = self.world.CreateJoint(jointDefinition);
+            if (!point.x || !point.y) {
+                point.x = e.changedTouches[0]?.clientX 
+                point.y = e.changedTouches[0]?.clientY
             }
-    
-            joint.SetTarget(new b2Vec2(point.x, point.y));
-        });
-    
-        this.element.addEventListener("mouseup", function (e) {
-            const point = calculateWorldPosition(e);
-            const power = {x: (start.x - point.x) * 2, y: (start.y - point.y) * 6}
+            const power = {x: (startVec.x - point.x) * 2, y: (startVec.y - point.y) * 6}
             // Shot
             if (!obj) return
             obj.body.ApplyImpulse({ x: 1e8 * power.x, y: 1e8 * power.y}, obj.body.GetWorldCenter());
@@ -169,7 +179,16 @@ export default class Physics {
                 self.world.DestroyJoint(joint);
                 joint = null;
             }         
-        });
+        }
+    
+        this.element.addEventListener("mousedown", start);
+        this.element.addEventListener("touchstart", start);
+    
+        this.element.addEventListener("mousemove", move);
+        this.element.addEventListener("touchmove", move);
+    
+        this.element.addEventListener("mouseup", end);
+        this.element.addEventListener("touchend", end);
     
     }
     collision() {
