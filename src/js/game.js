@@ -97,9 +97,9 @@ export const game = {
         this.arrow.pivot.set(250,250)
         this.arrow.position.x = w * .15
         this.arrow.position.y = h * .9
-        this.arrow.scale.set(.15)
+        this.arrow.scale.set(.13)
         this.arrow.alpha = 0
-        this.arrow.rotation = Math.PI * .75
+        this.arrow.rotation = Math.PI * .8
         
 
       gsap.to(this.arrow.position, .7, {x: '-=25', y: '+=18', yoyo: true, repeat: -1, ease: 'power2.inOut'})
@@ -110,7 +110,7 @@ export const game = {
 
        // win
        this.instruction = new PIXI.Text('PULL AND RELEASE TO SHOT',{fontFamily : 'Arial Black', fontSize: 16, fill : 0x7FBAA9, align : 'center'})
-       this.mainText = new PIXI.Text('HIT ALL 3 YELLOW BALLS OR MAKE THEM FALL ON THE GROUND',{fontFamily : 'Arial Black', fontSize: 25, fill : 0x7FBAA9, align : 'center'})
+       this.mainText = new PIXI.Text('HIT ALL 3 YELLOW BALLS\nOR MAKE THEM FALL\nON THE GROUND',{fontFamily : 'Arial Black', fontSize: 25, fill : 0x7FBAA9, align : 'center'})
        this.winText = new PIXI.Text('WIN',{fontFamily : 'Arial Black', fontSize: 50, fill : 0x7FBAA9, align : 'center'})
     
        this.mainText.pivot.x = this.mainText.width / 2
@@ -125,7 +125,7 @@ export const game = {
        this.mainText.alpha = this.instruction.alpha = this.winText.alpha = 0
        gsap.to([this.mainText, this.instruction], .5, {alpha: 1, delay: 1, yoyo: true, repeat: 1, repeatDelay: 2.5})
        this.app.stage.addChild(this.mainText)
-       this.app.stage.addChild(this.instruction)
+       this.scene.addChild(this.instruction)
        this.app.stage.addChild(this.winText)
 
 
