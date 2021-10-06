@@ -196,7 +196,7 @@ export const game = {
                         const p2 = o.body.GetPosition()
                         const distance = getDistance(p1,p2)
                         if (Math.abs((p1.x - p2.x) / distance * 1e8)) {
-                            o.body.ApplyImpulse({x: Math.abs((p1.x - p2.x) / distance * 1e7), y: Math.abs((p1.y - p2.y) / distance * 1e7)}, o.body.GetWorldCenter())
+                            o.body.ApplyImpulse({x: (p1.x - p2.x) / distance * -1e7, y: (p1.y - p2.y) / distance * -1e7}, o.body.GetWorldCenter())
                         }
                     })
                     this.disabled = true
@@ -220,7 +220,11 @@ export const game = {
         game.add(game.rect('static', {color: 0x777777, x: w * .2, y: h * .95, width: 1, height: 200}))
         // append canvas to the container
         document.body.appendChild(this.app.view);
-        this.resize()
+
+        // resize handling
+        window.onresize = () => {
+            this.app.renderer.resize(window.innerWidth,window.innerHeight)
+        }
     },
     add: function(obj) {
         this.scene.addChild(obj.shape)
@@ -287,19 +291,6 @@ export const game = {
         shape.position.y = y;
         shape.drawCircle(0, 0, radius);
         return {shape}
-    },
-    resize: function() {
-            let w,h;
-            if (window.innerWidth / window.innerHeight >= this.ratio) {
-                w = window.innerHeight * this.ratio;
-                h = window.innerHeight;
-            } else {
-                w = window.innerWidth;
-                h = window.innerWidth / this.ratio;
-            }
-            this.app.view.style.width = w + 'px';
-            this.app.view.style.height = h + 'px';
-        window.onresize = () => this.resize();
     },
     render: function() {
         let elapsed = 0
