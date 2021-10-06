@@ -102,14 +102,14 @@ export const game = {
         this.arrow.rotation = Math.PI * .8
         
 
-      gsap.to(this.arrow.position, .7, {x: '-=25', y: '+=18', yoyo: true, repeat: -1, ease: 'power2.inOut'})
-      gsap.to(this.arrow, {alpha: .5, yoyo: true, repeat: 1, repeatDelay: .7 * 5})
+       gsap.to(this.arrow.position, .7, {x: '-=25', y: '+=18', yoyo: true, repeat: -1, ease: 'power2.inOut'})
+       gsap.to(this.arrow, {alpha: .5, yoyo: true, repeat: 1, repeatDelay: .7 * 5})
 
        this.scene.addChild(this.arrow)
 
 
        // win
-       this.instruction = new PIXI.Text('PULL AND RELEASE TO SHOT',{fontFamily : 'Arial Black', fontSize: 16, fill : 0x7FBAA9, align : 'center'})
+       this.instruction = new PIXI.Text('PULL AND RELEASE TO SHOOT',{fontFamily : 'Arial Black', fontSize: 16, fill : 0x7FBAA9, align : 'center'})
        this.mainText = new PIXI.Text('HIT ALL 3 YELLOW BALLS\nOR MAKE THEM FALL\nON THE GROUND',{fontFamily : 'Arial Black', fontSize: 25, fill : 0x7FBAA9, align : 'center'})
        this.winText = new PIXI.Text('WIN',{fontFamily : 'Arial Black', fontSize: 50, fill : 0x7FBAA9, align : 'center'})
     
