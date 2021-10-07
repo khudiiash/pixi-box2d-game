@@ -139,11 +139,14 @@ export default class Physics {
             }
             startVec = point
             self.world.QueryPoint(function (fixture) {
-                obj = fixture.GetBody().GetUserData();
+                obj = fixture.GetBody().GetUserData()
+                if (!fixture.GetBody().GetUserData().details.ball ||
+                    fixture.GetBody().GetUserData().away) obj = null
             }, point);
         }
         function move(e) {
                 if (!obj) return
+        
                 const point = calculateWorldPosition(e);
                 if (!point.x || !point.y) {
                     point.x = e.touches[0]?.clientX 

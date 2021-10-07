@@ -34,6 +34,7 @@ export const game = {
 
         this.physics.click(function(body) {
            // move the camera
+           if (body !== self.ball.body) return
            setTimeout(() => {
                if (body === self.ball.body && body.GetPosition().x > self.sizes.width * .2) 
                gsap.to(self.scene.position, 1, {
@@ -320,7 +321,7 @@ export const game = {
         setTimeout(() => this.spawnBall(), 200)
 
         // create ball stick
-        this.stick = game.add(game.rect('static', {color: 0x777777, x: w * .2, y: h * .95, width: 1, height: 200}))
+        this.stick = game.add(game.rect('static', {color: 0x00ffdd, x: w * .2, y: h * .95, width: 1, height: 200}))
         // append canvas to the container
         document.body.appendChild(this.app.view);
 
@@ -360,7 +361,7 @@ export const game = {
         shape.lineStyle({ color: 0xffffff, width: 1, alignment: 0 });
         shape.position.x = x + (width/2);
         shape.position.y = y + (height/2);
-        shape.drawRect(-(width/2), -(height/2), width, height);
+        shape.drawRoundedRect(-(width/2), -(height/2), width, height, 5);
         const body = this.physics.add({ type, x, y, height, width })
         body.shape = shape        
         this.objects.push(body)
@@ -383,7 +384,7 @@ export const game = {
         const {width: w, height: h} = this.sizes 
         if (this.ball && Math.abs(this.ball.body.GetPosition().x - w * .2) < 5 || this.score === 3) return;
         gsap.to(this.ball?.shape, 1, {alpha: .2})
-        this.ball = game.add(game.circle('dynamic', {color: 0xff4400, x: w * .2, y: h * .5, radius: this.mobile ? 18 : 25, density: 50, friction: 0, restitution: 0.6}))
+        this.ball = game.add(game.circle('dynamic', {color: 0xff4400, x: w * .2, y: h * .5, radius: this.mobile ? 18 : 25, density: 50, friction: 0, restitution: 0.6, ball: true}))
         gsap.from(this.ball.shape, .5, {alpha: 0})
     },
     star: function(details) {
